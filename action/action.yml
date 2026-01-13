@@ -1,0 +1,58 @@
+name: "Setup gox"
+description: "Set up gox cross-compilation environment with Zig"
+author: "qntx"
+
+branding:
+  icon: "package"
+  color: "orange"
+
+inputs:
+  go-version:
+    description: "Go version to install"
+    required: false
+    default: "stable"
+  gox-version:
+    description: "gox version to install (e.g., v1.0.0, latest)"
+    required: false
+    default: "latest"
+  zig-version:
+    description: "Zig version to pre-install (optional, gox auto-downloads if not set)"
+    required: false
+    default: ""
+
+outputs:
+  gox-path:
+    description: "Path to gox binary"
+    value: ${{ steps.install-gox.outputs.gox-path }}
+  go-version:
+    description: "Installed Go version"
+    value: ${{ steps.setup-go.outputs.go-version }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Go
+      id: setup-go
+      uses: actions/setup-go@v6
+      with:
+        go-version: ${{ inputs.go-version }}
+
+    - name: Install gox
+      id: install-gox
+      shell: bash
+      run: |
+        if [ "${{ inputs.gox-version }}" = "latest" ]; then
+          go install github.com/qntx/gox/cmd/gox@latest
+        else
+          go install github.com/qntx/gox/cmd/gox@${{ inputs.gox-version }}
+        fi
+        GOX_PATH="$(go env GOPATH)/bin/gox"
+        echo "gox-path=$GOX_PATH" >> $GITHUB_OUTPUT
+        echo "gox installed at $GOX_PATH"
+
+    - name: Pre-install Zig (optional)
+      if: inputs.zig-version != ''
+      shell: bash
+      run: |
+        gox zig update ${{ inputs.zig-version }}
+        echo "Zig ${{ inputs.zig-version }} pre-installed"
