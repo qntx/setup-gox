@@ -1,11 +1,11 @@
-# setup-gox Action
+# setup-gox
 
 GitHub Action to set up [gox](https://github.com/qntx/gox) cross-compilation environment.
 
 ## Usage
 
 ```yaml
-- uses: qntx/gox/action@main
+- uses: qntx/setup-gox@main
   with:
     go-version: "stable"      # optional, default: stable
     gox-version: "latest"     # optional, default: latest
@@ -27,7 +27,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: qntx/gox/action@main
+      - uses: qntx/setup-gox@main
 
       - name: Build for Linux
         run: gox build --os linux --arch amd64 -o myapp
@@ -57,7 +57,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: qntx/gox/action@main
+      - uses: qntx/setup-gox@main
 
       - name: Build
         run: gox build --os ${{ matrix.target.os }} --arch ${{ matrix.target.arch }} -o app-${{ matrix.target.os }}-${{ matrix.target.arch }}
@@ -71,11 +71,11 @@ jobs:
 ### With Specific Versions
 
 ```yaml
-- uses: qntx/gox/action@main
+- uses: qntx/setup-gox@main
   with:
-    go-version: "1.23"
-    gox-version: "v1.0.0"
-    zig-version: "0.13.0"
+    go-version: "1.25"
+    gox-version: "v0.6.0"
+    zig-version: "0.15.1"
 ```
 
 ## Inputs
